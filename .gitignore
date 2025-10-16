@@ -215,9 +215,10 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# data
-data/
-.pkl
-.csv
-.xlsx
-.json
+# ata
+data/val.pkl
+data/train.pkl
+data/test.pkl
+*.pkl
+data/train.pkl
+/data
