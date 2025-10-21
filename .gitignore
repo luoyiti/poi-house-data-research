@@ -215,10 +215,15 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# ata
+# data
 data/val.pkl
 data/train.pkl
 data/test.pkl
 *.pkl
 data/train.pkl
 /data
+
+# paper
+/papers
+papers/README.pdf
+papers/2311.11812v1.pdf
