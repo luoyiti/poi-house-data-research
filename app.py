@@ -11,9 +11,9 @@ st.title("基于POI空间特征的邻里环境与房产价值关系研究")
 
 st.markdown("""
             
-罗一逖231820309
+罗一逖 231820309
 
-吴林洁231820307
+吴林洁 231820307
 
 > 项目仓库: [点击这里](https://github.com/luoyiti/Urban_Dynamic_System_Multi-Source_Data_Research)
 
