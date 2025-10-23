@@ -1,4 +1,5 @@
 import streamlit as st
+from pathlib import Path
 
 st.set_page_config(
     page_title="基于POI空间特征的邻里环境与房产价值关系研究",
@@ -19,9 +20,9 @@ st.markdown("""
 
 ## 功能介绍
 
-- 📊 数据统计：查看和分析数据
+- 📊 数据分析：数据描述与分析
 
-- 🔮 模型构建：使用机器学习模型
+- 🔮 模型预测：数学建模与预测
 
 """)
 
@@ -29,10 +30,17 @@ st.markdown("""
 col1, col2 = st.columns(2)
 
 with col1:
-    st.info("数据分析", icon="📊")
-    st.write("探索你的数据")
+    st.info("数据分析")
+    st.write("数据描述与分析")
     
 with col2:
-    st.info("模型预测", icon="🔮")
-    st.write("AI 预测功能")
-    
+    st.info("模型预测")
+    st.write("数学建模与预测")
+
+@st.cache_data
+def read_md(path: str, encoding: str = "utf-8") -> str:
+    return Path(path).read_text(encoding=encoding)
+
+md_path = "README.md"  # 你的本地路径
+content = read_md(md_path)
+st.markdown(content)  # 直接渲染
