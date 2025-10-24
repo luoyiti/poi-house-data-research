@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 def calculate_building_hardware_weights(df):
     """
     计算建筑硬件特征的最优权重（只包含电梯+楼层组合、结构、朝向、梯户比）
+    这里只在最后使用了自动赋权，是因为都是文本数据，转化成数值数据之前需要人工赋值
     删除线性回归方法，只使用相关性和随机森林，优化零权重和负相关问题
     """
     print("=== 计算建筑硬件特征最优权重 ===\n")
