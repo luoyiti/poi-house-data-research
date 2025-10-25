@@ -59,8 +59,19 @@ house_poi_data.json 数据包括
 
 poi指标:
 
-$Importance_{POI} = w_A * A + w_b * B$
+$Importance_{POI} = w_A * A + w_b * B + w_c * C$
 
-Importance代表节点重要性
-A 代表着POI点的地理中心性
-B 代表着POI点的类型重要性
+Importance代表节点的价值重要性，它由节点附近的房产价格推导得出
+
+A 代表着POI点的类型重要性
+
+B 代表着POI点的地理位置中心性
+
+C 代表着POI点的网络接近中心性
+
+其中, A, B, C 均是归一化后的参数
+
+Node2Vec 将网络信息转换为高维向量
+
+H3 Embedding 将地理信息转换为高维向量
+

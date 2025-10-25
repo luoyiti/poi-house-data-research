@@ -77,3 +77,4 @@ os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
 df_features.to_csv(OUTPUT_FILE, index=False, encoding='utf-8-sig')
 print(f" 特征文件已保存: {OUTPUT_FILE}")
 print(f"样本数: {len(df_features):,}, 特征数: {len(df_features.columns)}")
+
