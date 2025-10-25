@@ -1,0 +1,12 @@
+POI全局权重（先验+数据驱动）:
+amenity: 0.5583
+shop: 0.4693
+tourism: 0.4517
+leisure: 0.4182
+healthcare: 0.5753
+public_transport: 0.6301
+railway: 0.4549
+aeroway: 0.1587
+sport: 0.2545
+education: 0.5000
+office: 0.5235
