@@ -1,77 +1,373 @@
 # 基于POI空间特征的邻里环境与房产价值关系研究
 
-项目可视化网页:[点击这里](https://poi-houses-research-9yja5cw77orgedwvsnqs2k.streamlit.app/)
+> 城市动态系统多源数据研究项目
 
-## 研究数据
+**项目作者：** 罗一逖 (231820309)、吴林洁 (231820307)
 
-房产价格数据 + poi数据整合
+**项目可视化网页：** [点击访问在线演示](https://poi-houses-research-9yja5cw77orgedwvsnqs2k.streamlit.app/)
 
-house_poi_data.json 数据包括
+**项目仓库：** [GitHub](https://github.com/luoyiti/Urban_Dynamic_System_Multi-Source_Data_Research)
 
-    "id": house_id,
+---
 
-    "price_per_meter": price,
+## 📋 目录
 
-    "lon" 纬度数据
+- [项目简介](#项目简介)
+- [研究问题](#研究问题)
+- [数据说明](#数据说明)
+- [研究方法](#研究方法)
+- [技术栈](#技术栈)
+- [项目结构](#项目结构)
+- [安装与运行](#安装与运行)
+- [主要功能](#主要功能)
+- [研究成果](#研究成果)
 
-    "lat" 经度数据
+---
 
-    "pois" 包括所有附近一公米范围内的poi兴趣点(已去除住房兴趣点)
+## 📖 项目简介
 
-其中 poi 数据还被保存在poi_data.json中(共计40887条), 包括
+本项目基于北京市房产数据和POI（Point of Interest，兴趣点）数据，运用空间分析、网络分析、机器学习等多种方法，深入研究邻里环境对房产价值的影响机制。通过整合多源地理空间数据，构建房产-POI网络，揭示城市空间结构与房价分布的内在关系。
 
-    id 独特的标识
+## 🔍 研究问题
 
-    lon 纬度数据
+1. **空间分布特征：** 住房社区的邻里环境（由POI兴趣点表征）呈现怎样的空间分布特征？
+2. **价格影响机制：** 不同类型的POI对房产价格有什么样的影响？影响程度如何？
+3. **市场空间划分：** 如何基于POI特征和空间关系对北京房价市场进行合理划分？
+4. **价格预测模型：** 如何利用POI空间特征构建有效的房价预测模型？
 
-    lat 经度数据
+## 📊 数据说明
 
-    tags poi特征数据, 根据poi类型不同而内容不同，需要额外处理
+### 数据来源
 
-更详细的住房信息保存在house_data.json中，包括
+- **房产数据：** 北京市二手房交易数据，包含价格、位置、楼层、建筑结构等信息
+- **POI数据：** 通过OpenStreetMap（OSM）爬取的北京市兴趣点数据
+- **地理数据：** 北京市行政区划、道路网络等地理信息数据
 
-    id, price_per_meter, lon, lat
+**数据下载链接：** [点击这里](https://box.nju.edu.cn/d/ea1107e0d0f740ffacde/)
 
-    floor 楼层信息, town 区域名称, community_name 小区名称, county 所属区名
+### 数据文件说明
 
-数据保存地:[点击这里](https://box.nju.edu.cn/d/ea1107e0d0f740ffacde/)
+#### 1. `house_poi_data.json` - 房产与POI整合数据
+```json
+{
+    "id": "房产唯一标识",
+    "price_per_meter": "单价（元/平方米）",
+    "lon": "经度",
+    "lat": "纬度",
+    "pois": [
+        {
+            "id": "POI标识",
+            "first_tag": "POI主要类型",
+            "distance": "距离（米）"
+        }
+    ]
+}
+```
 
-## 研究问题
+#### 2. `poi_data.json` - POI兴趣点数据（共计40,887条）
+```json
+{
+    "id": "POI唯一标识",
+    "lon": "经度",
+    "lat": "纬度",
+    "tags": {
+        "amenity/shop/tourism/...": "具体类型"
+    }
+}
+```
 
-住房社区的邻居环境(poi兴趣点代表)呈现怎样的分布特征，其对于房产价格有什么样的影响？
+#### 3. `house_property.csv` - 详细房产信息
+- **基础信息：** id, price_per_meter, lon, lat
+- **建筑信息：** floor（楼层）, BuildingStructure（建筑结构）
+- **区域信息：** town（区域）, community_name（小区）, county（所属区）
 
-## 研究方法
+#### 4. 其他数据文件
+- `house_poi_graph.gml` - 房产-POI网络图数据
+- `gdf_houses_clustered.geojson` - 空间聚类结果
+- `house_poi_skater_clusters.json` - SKATER聚类结果
 
-1. 设置poi节点指标，计算poi重要性权重
+## 🔬 研究方法
 
-2. 运用机器学习方法，根据poi点重要性预测房产价格
+### 1. 数据预处理
+- POI数据爬取与清洗（使用Overpass API）
+- 房产数据标准化处理
+- 空间距离计算（Haversine公式）
+- 数据整合与特征工程
 
-3. 运用机器学习模型，根据所有poi兴趣点，划分房产市场
+### 2. 空间聚类分析（SKATER算法）
+- **目标：** 基于POI特征和空间邻近性对房产市场进行划分
+- **方法：** Spatial K'luster Analysis by Tree Edge Removal
+- **权重构建：** 
+  - 距离带权重（DistanceBand, 阈值8000米）
+  - K近邻权重（KNN, k=1000）
+  - 权重融合（w_union）
+- **聚类特征：**
+  - POI可达性（医疗、教育、商业、交通等）
+  - 地理位置（与市中心距离）
+  - 建筑特征（楼层、结构等）
+  - 网络中心性指标
 
-聚类分析: 提取附近poi兴趣点特征，对房产进行分类
+### 3. 特征重要性分析
+- **随机森林回归：** 计算各类POI对房价的影响权重
+- **相关性分析：** 探索空间特征与房价的关系
+- **可视化展示：** 特征重要性排序与热图
 
-机器学习方法: 根据决策树等方法，构造价格预测模型(例如将房产附近拥有的地标输入，生成一个可能的价格)
+### 4. 机器学习预测模型
+- **传统模型：**
+  - 线性回归（Linear Regression, Ridge, Lasso, ElasticNet）
+  - 决策树（Decision Tree）
+  - 随机森林（Random Forest）
+  - 支持向量机（SVR）
+  - 梯度提升（GradientBoosting, XGBoost, LightGBM）
+  - 神经网络（MLPRegressor）
+  
+- **深度学习模型：**
+  - POI类型嵌入网络（PyTorch）
+  - 注意力机制聚合POI特征
+  - 端到端房价预测
 
-网络分析: 将多个poi兴趣点、多个住房点连接成一个大型网络，采用pagerank算法、图神经网络等方式预测房产价格
-(例如，就pagerank算法而言，一个社区内的住房点更可能有相同的住房价格，于是每一个节点有其自己的价格特征，邻近节点之间存在网络连接，连接越多高价格的房产，则其自身越有可能有更高的价格)
+### 5. 网络分析
+- **网络构建：** 房产-POI二部图
+- **网络指标：**
+  - 度中心性（Degree Centrality）
+  - 接近中心性（Closeness Centrality）
+  - 介数中心性（Betweenness Centrality）
+  - PageRank值
+- **网络可视化：** NetworkX + Matplotlib
 
-## 指标设置
+### 6. 地理空间可视化
+- **交互式地图：** Folium热力图、散点图
+- **静态地图：** Matplotlib + Contextily底图
+- **空间分布图：** GeoPandas + Shapely
 
-poi指标:
+## 🛠️ 技术栈
 
-$Importance_{POI} = w_A * A + w_b * B + w_c * C$
+### 核心技术
+- **编程语言：** Python 3.13
+- **Web框架：** Streamlit
+- **数据处理：** Pandas, NumPy
+- **地理空间：** GeoPandas, Shapely, Geopy
+- **机器学习：** Scikit-learn, XGBoost, LightGBM
+- **深度学习：** PyTorch
+- **网络分析：** NetworkX
+- **空间分析：** LibPySAL, Spopt
+- **可视化：** Matplotlib, Seaborn, Folium, Contextily
+- **数据爬取：** Overpy (Overpass API)
 
-Importance代表节点的价值重要性，它由节点附近的房产价格推导得出
+### 依赖库
+详见 [`requirements.txt`](requirements.txt)
 
-A 代表着POI点的类型重要性
+## 📁 项目结构
 
-B 代表着POI点的地理位置中心性
+```
+Urban_Dynamic_System_Multi-Source_Data_Research/
+│
+├── app.py                          # Streamlit主应用入口
+├── requirements.txt                # Python依赖包列表
+├── README.md                       # 项目说明文档
+│
+├── pages/                          # Streamlit多页面应用
+│   ├── 数据展示.py                  # 数据可视化展示页面
+│   ├── 市场划分.py                  # 空间聚类分析结果展示
+│   ├── 模型预测.py                  # 机器学习模型预测展示
+│   └── 论文成果.py                  # 研究成果与论文展示
+│
+├── data/                           # 数据文件目录
+│   ├── house_data.json             # 房产基础数据
+│   ├── poi_data.json               # POI兴趣点数据
+│   ├── house_poi_data.json         # 房产-POI整合数据
+│   ├── house_property.csv          # 房产详细属性
+│   ├── house_poi_graph.gml         # 房产-POI网络图
+│   ├── gdf_houses_clustered.*      # 聚类结果（shapefile/geojson）
+│   └── beijing/                    # 北京市地理数据（shapefiles）
+│
+├── prediction/                     # 机器学习预测模块
+│   ├── construct_features.py       # 特征构建
+│   ├── construct_POI_significance.py  # POI重要性计算
+│   ├── calculate_features_weight.py   # 特征权重计算
+│   ├── predict_house_prices.py     # 房价预测模型训练
+│   ├── visualization.py            # 预测结果可视化
+│   ├── visualization_on_map.py     # 地图可视化
+│   └── abstract_merged_data.py     # 数据抽象与合并
+│
+├── view/                           # 可视化脚本
+│   ├── house_on_map.py             # 房产地图可视化
+│   ├── house_poi_on_map.ipynb      # 房产-POI交互地图
+│   ├── house_with_price.ipynb      # 房价分布可视化
+│   └── poi_with_price.ipynb        # POI与房价关系可视化
+│
+├── tools/                          # 工具函数
+│   ├── distance_calculator.py      # 距离计算工具
+│   └── data_tool.py                # 数据处理工具
+│
+├── scrapy/                         # 数据爬取脚本
+│
+├── image/                          # 生成的图表和地图
+│   ├── beijing_house_price_map.png
+│   ├── SKATER_BEIJING.png          # 聚类结果图
+│   ├── ElbowImage.png              # 肘部法则图
+│   └── ...
+│
+└── *.ipynb                         # Jupyter Notebooks
+    ├── cluster.ipynb               # 聚类分析
+    ├── cluster_analysis.ipynb      # 聚类分析详细版
+    ├── network.ipynb               # 网络分析
+    ├── poi_net.ipynb               # POI网络构建
+    ├── dataProcess.ipynb           # 数据处理
+    ├── poi_process.ipynb           # POI数据处理
+    ├── poiStratch.ipynb            # POI数据爬取
+    └── EncodeInformation.ipynb     # 深度学习编码
+```
 
-C 代表着POI点的网络接近中心性
+## 🚀 安装与运行
 
-其中, A, B, C 均是归一化后的参数
+### 环境要求
+- Python 3.8+
+- pip 或 conda
 
-Node2Vec 将网络信息转换为高维向量
+### 安装步骤
 
-H3 Embedding 将地理信息转换为高维向量
+1. **克隆仓库**
+```bash
+git clone https://github.com/luoyiti/Urban_Dynamic_System_Multi-Source_Data_Research.git
+cd Urban_Dynamic_System_Multi-Source_Data_Research
+```
+
+2. **创建虚拟环境（推荐）**
+```bash
+# 使用venv
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# 或使用conda
+conda create -n urban_research python=3.13
+conda activate urban_research
+```
+
+3. **安装依赖**
+```bash
+pip install -r requirements.txt
+```
+
+4. **下载数据**
+- 从 [数据链接](https://box.nju.edu.cn/d/ea1107e0d0f740ffacde/) 下载数据文件
+- 解压到 `data/` 目录
+
+5. **运行Streamlit应用**
+```bash
+streamlit run app.py
+```
+
+应用将在浏览器中自动打开，默认地址：`http://localhost:8501`
+
+### Jupyter Notebook使用
+
+```bash
+jupyter notebook
+# 或
+jupyter lab
+```
+
+## 🎯 主要功能
+
+### 1. 数据展示
+- 📍 **住房与POI分布地图：** 展示北京市房产和POI的空间分布
+- 💰 **房价分布热力图：** 可视化房价在空间上的分布模式
+- 🌐 **房产-POI网络图：** 展示房产与周边POI的关联网络
+- 📊 **统计描述分析：** 数据的基本统计特征
+
+### 2. 市场划分
+- 🔍 **肘部法则分析：** 确定最优聚类数量（K值）
+- 🗺️ **SKATER空间聚类：** 基于空间约束的房价市场划分
+- 📈 **聚类特征分析：** 各聚类区域的POI特征对比
+- 🎨 **空间可视化：** 聚类结果在地图上的展示
+
+**聚类结果示例：**
+
+| 标识符 | 主要影响因素 | 平均房产价格 |
+|-------|------------|------------|
+| 0 | 医疗设施稀缺, 旅游景点丰富, 商业设施丰富 | 29,101元/㎡ |
+| 1 | 医疗设施丰富, 旅游景点丰富, 教育资源丰富 | 35,737元/㎡ |
+| 2 | 商业设施丰富, 建筑结构好, 旅游资源稀缺 | 27,356元/㎡ |
+| 3 | 商业设施稀缺, 医疗设施稀缺, 距离市中心远 | 14,453元/㎡ |
+| 4 | 距离市中心远, 节点接近中心性低, 医疗设施稀缺 | 18,455元/㎡ |
+| 5 | 距离市中心远, 商业设施稀缺, 医疗设施稀缺 | 15,316元/㎡ |
+
+### 3. 模型预测
+- 🤖 **多模型对比：** 比较不同机器学习模型的预测性能
+- 📊 **特征重要性分析：** 识别影响房价的关键POI类型
+- 🎯 **预测结果可视化：** 真实值vs预测值散点图
+- 📈 **模型评估指标：** RMSE, MAE, R²等
+
+### 4. 论文成果
+- 📄 **研究报告：** 完整的研究方法与结果
+- 📑 **可视化图表：** 所有分析图表的集合
+- 🔗 **相关链接：** 数据来源、参考文献等
+
+## 📈 研究成果
+
+### 主要发现
+
+1. **POI类型影响差异显著**
+   - 教育设施、医疗设施对高端房价影响最大
+   - 公交站点密度与房价呈正相关
+   - 旅游景点对特定区域房价有正向影响
+
+2. **空间聚类特征明显**
+   - 北京房价市场可划分为6个空间聚类区域
+   - 高价区集中在核心城区，具备完善的POI配套
+   - 低价区位于远郊，POI可达性较低
+
+3. **网络中心性与房价关系**
+   - 网络接近中心性高的房产价格普遍较高
+   - 房产-POI网络呈现小世界特征
+   - 度中心性反映房产周边配套丰富度
+
+4. **预测模型性能**
+   - 集成学习模型（XGBoost, LightGBM）表现最佳
+   - 深度学习模型在复杂特征学习上有优势
+   - 空间特征显著提升模型预测精度
+
+### 指标体系
+
+#### POI重要性指标
+
+$$Importance_{POI} = w_A \cdot A + w_B \cdot B + w_C \cdot C$$
+
+其中：
+- **A - POI类型重要性：** 不同类型POI对房价的影响权重
+- **B - 地理位置中心性：** POI到市中心的距离（H3 Embedding）
+- **C - 网络接近中心性：** POI在房产-POI网络中的重要程度（Node2Vec）
+- $w_A, w_B, w_C$ 为权重系数，通过随机森林回归拟合得到
+
+#### 嵌入方法
+- **Node2Vec：** 将网络拓扑信息转换为高维向量表示
+- **H3 Embedding：** 将地理空间信息转换为分层六边形编码
+
+## 📚 相关资源
+
+- **OpenStreetMap：** [https://www.openstreetmap.org](https://www.openstreetmap.org)
+- **Overpass API：** [https://overpass-api.de](https://overpass-api.de)
+- **LibPySAL：** [https://pysal.org/libpysal](https://pysal.org/libpysal)
+- **Streamlit：** [https://streamlit.io](https://streamlit.io)
+
+## 👥 贡献者
+
+- **罗一逖** - 数据处理、模型构建、可视化开发
+- **吴林洁** - 数据分析、空间聚类、论文撰写
+
+## 📄 许可证
+
+本项目仅供学术研究使用。
+
+## 📧 联系方式
+
+如有任何问题或建议，欢迎通过以下方式联系：
+
+- GitHub Issues: [提交问题](https://github.com/luoyiti/Urban_Dynamic_System_Multi-Source_Data_Research/issues)
+- Email: [项目邮箱](mailto:luoyititi@icloud.com)
+
+---
+
+**⭐ 如果这个项目对您有帮助，请给我们一个Star！**
 

@@ -15,7 +15,7 @@ img = Image.open("./image/beijing_house_price_map_with_basemap.png")
 st.image(img, caption="北京房价分布地图", use_container_width=True)
 
 st.markdown("## POI兴趣点邻近房价地图")
-img = Image.open("./image/beijing_poi_price_map.png")
+img = Image.open("./image/beijing_price_map_with_location_inset.png")
 st.image(img, caption="POI兴趣点邻近房价地图", use_container_width=True)
 
 st.markdown("## 住房-POI兴趣点网络图")

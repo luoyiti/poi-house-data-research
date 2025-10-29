@@ -195,13 +195,6 @@ df_model_params = pd.DataFrame(model_params_data)
 
 st.dataframe(df_model_params, hide_index=True, use_container_width=True)
 
-st.markdown("""
-**说明**:
-- 所有模型均采用网格搜索(GridSearchCV)进行超参数调优
-- 使用5折交叉验证评估模型性能
-- 评估指标包括:MAE(平均绝对误差)、MSE(均方误差)、RMSE(均方根误差)、R²(决定系数)、MAPE(平均绝对百分比误差)
-""")
-
 # 创建模型评估结果表格
 st.markdown("### 模型评估结果对比")
 
