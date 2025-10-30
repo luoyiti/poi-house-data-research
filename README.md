@@ -94,7 +94,21 @@
 - 空间距离计算（Haversine公式）
 - 数据整合与特征工程
 
-### 2. 空间聚类分析（SKATER算法）
+### 2. 特征重要性分析
+- **随机森林回归：** 计算各类POI对房价的影响权重
+- **相关性分析：** 探索空间特征与房价的关系
+- **可视化展示：** 特征重要性排序与热图
+
+### 3. 机器学习预测模型
+- **传统模型：**
+  - 线性回归（Linear Regression, Ridge, Lasso, ElasticNet）
+  - 决策树（Decision Tree）
+  - 随机森林（Random Forest）
+  - 支持向量机（SVR）
+  - 梯度提升（GradientBoosting, XGBoost, LightGBM）
+  - 神经网络（MLPRegressor）
+
+### 4. 空间聚类分析（SKATER算法）
 - **目标：** 基于POI特征和空间邻近性对房产市场进行划分
 - **方法：** Spatial K'luster Analysis by Tree Edge Removal
 - **权重构建：** 
@@ -104,27 +118,8 @@
 - **聚类特征：**
   - POI可达性（医疗、教育、商业、交通等）
   - 地理位置（与市中心距离）
-  - 建筑特征（楼层、结构等）
-  - 网络中心性指标
-
-### 3. 特征重要性分析
-- **随机森林回归：** 计算各类POI对房价的影响权重
-- **相关性分析：** 探索空间特征与房价的关系
-- **可视化展示：** 特征重要性排序与热图
-
-### 4. 机器学习预测模型
-- **传统模型：**
-  - 线性回归（Linear Regression, Ridge, Lasso, ElasticNet）
-  - 决策树（Decision Tree）
-  - 随机森林（Random Forest）
-  - 支持向量机（SVR）
-  - 梯度提升（GradientBoosting, XGBoost, LightGBM）
-  - 神经网络（MLPRegressor）
-  
-- **深度学习模型：**
-  - POI类型嵌入网络（PyTorch）
-  - 注意力机制聚合POI特征
-  - 端到端房价预测
+  - 建筑特征（楼层、结构等
+  - 网络中心性指标）
 
 ### 5. 网络分析
 - **网络构建：** 房产-POI二部图
@@ -332,15 +327,17 @@ jupyter lab
 
 #### POI重要性指标
 
-$$Importance_{POI} = w_A \cdot A + w_B \cdot B + w_C \cdot C$$
+$$score_{i, j}^{raw} = \sum_{k \in POI_j} e^{-\alpha * dist(i,k)}, \text{if } dist(i,k) \leq D_{max}$$
 
 其中：
-- **A - POI类型重要性：** 不同类型POI对房价的影响权重
-- **B - 地理位置中心性：** POI到市中心的距离（H3 Embedding）
-- **C - 网络接近中心性：** POI在房产-POI网络中的重要程度（Node2Vec）
-- $w_A, w_B, w_C$ 为权重系数，通过随机森林回归拟合得到
+- 𝑗表示POI类别
+- dist(i,k)为房源i到 POIk 的地理距离（单位：公里）
+- α为距离衰减系数，设置为0.5
+- D_max为最大考虑距离，设置为1公里
+
 
 #### 嵌入方法
+
 - **Node2Vec：** 将网络拓扑信息转换为高维向量表示
 - **H3 Embedding：** 将地理空间信息转换为分层六边形编码
 
@@ -353,8 +350,8 @@ $$Importance_{POI} = w_A \cdot A + w_B \cdot B + w_C \cdot C$$
 
 ## 👥 贡献者
 
-- **罗一逖** - 数据处理、模型构建、可视化开发
-- **吴林洁** - 数据分析、空间聚类、论文撰写
+- **罗一逖** - 数据处理、空间聚类、可视化开发
+- **吴林洁** - 数据分析、模型构建、论文撰写
 
 ## 📄 许可证
 
@@ -365,7 +362,7 @@ $$Importance_{POI} = w_A \cdot A + w_B \cdot B + w_C \cdot C$$
 如有任何问题或建议，欢迎通过以下方式联系：
 
 - GitHub Issues: [提交问题](https://github.com/luoyiti/Urban_Dynamic_System_Multi-Source_Data_Research/issues)
-- Email: [项目邮箱](mailto:luoyititi@icloud.com)
+- Email: [项目邮箱](mailto:231820309@smail.nju.edu.cn)
 
 ---
 
