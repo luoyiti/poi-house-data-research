@@ -4,7 +4,8 @@
 
 **项目作者：** 罗一逖 (231820309)、吴林洁 (231820307)
 
-**项目可视化网页：** [点击访问在线演示](http://localhost:8501/)
+**项目可视化网页：** [可视化仪表盘](https://linliyinghuanjiazhuanj-k1bcbpw.gamma.site/)
+[可视化仪表盘在线演示](\Urban_Dynamic_System_Multi-Source_Data_Research\archive\video_demonstration.mp4)
 
 **项目仓库：** [GitHub](https://github.com/luoyiti/Urban_Dynamic_System_Multi-Source_Data_Research)
 
@@ -255,9 +256,9 @@ jupyter lab
 
 ## 🎯 主要功能
 
-
-
-🏙️ 数据展示[详细报告点击这里](http://localhost:8000/pages/数据展示.html)
+ps：由于我们使用的网页网站会自动拦截github pages的链接，尝试使用了tinyurl.com生成的短链接，失败。最尝试netlify进行构建。最终直接粘贴githubpages成功。
+[主要功能页面链接](https://99wlj.github.io/Housing-Price-POI-Anaysis/)
+🏙️ 数据展示
 
 住房与POI分布地图
 
@@ -267,7 +268,7 @@ jupyter lab
 
 数据统计分析
 
-🤖 模型预测[详细报告点击这里](http://localhost:8000/pages/模型预测.html)
+🤖 模型预测
 
 多模型性能对比
 
@@ -277,7 +278,7 @@ jupyter lab
 
 模型评估指标
 
-🗺️ 市场划分[详细报告点击这里](http://localhost:8000/pages/市场划分.html)
+🗺️ 市场划分
 
 肘部法确定K值
 
@@ -287,9 +288,7 @@ SKATER空间聚类
 
 聚类结果可视化
 
-📄 论文成果[详细报告点击这里](http://localhost:8000/pages/论文成果.html)
-
-研究报告展示
+📄 论文成果
 
 可视化图表汇总
 
