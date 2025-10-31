@@ -5,7 +5,7 @@
 **项目作者：** 罗一逖 (231820309)、吴林洁 (231820307)
 
 **项目可视化网页：** [可视化仪表盘](https://linliyinghuanjiazhuanj-k1bcbpw.gamma.site/)
-[可视化仪表盘在线演示](\Urban_Dynamic_System_Multi-Source_Data_Research\archive\video_demonstration.mp4)
+[可视化仪表盘在线演示](https://www.bilibili.com/video/BV1CF1uB5Evg/?share_source=copy_web&vd_source=ec55aed2e8aa575327615a92d07ce7ae)
 
 **项目仓库：** [GitHub](https://github.com/luoyiti/Urban_Dynamic_System_Multi-Source_Data_Research)
 
