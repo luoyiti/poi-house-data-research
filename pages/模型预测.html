@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>房产价值预测模型构建</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #26c1f0;
+            /* 蓝色标题 */
+            margin-bottom: 40px;
+        }
+
+        h2,
+        h3 {
+            color: #64d0f0;
+            /* 蓝色小标题 */
+            border-bottom: 2px solid #6fbddf;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid  #6fbddf;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #9dc2e6;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #e6f0ff;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>房产价值预测模型构建</h1>
+
+        <p>本研究选择岭回归、Lasso回归、弹性网络、随机森林、梯度提升树、XGBoost、LightGBM、
+            支持向量机和多层感知器共九种机器学习算法进行房价预测建模。</p>
+
+        <h2>POI兴趣点先验权重表</h2>
+        <table>
+            <tr>
+                <th>POI类别</th>
+                <th>先验权重</th>
+            </tr>
+            <tr>
+                <td>amenity</td>
+                <td>0.8</td>
+            </tr>
+            <tr>
+                <td>shop</td>
+                <td>0.7</td>
+            </tr>
+            <tr>
+                <td>tourism</td>
+                <td>0.6</td>
+            </tr>
+            <tr>
+                <td>leisure</td>
+                <td>0.6</td>
+            </tr>
+            <tr>
+                <td>healthcare</td>
+                <td>1.0</td>
+            </tr>
+            <tr>
+                <td>Public_transport</td>
+                <td>1.0</td>
+            </tr>
+            <tr>
+                <td>railway</td>
+                <td>0.8</td>
+            </tr>
+            <tr>
+                <td>aeroway</td>
+                <td>0.3</td>
+            </tr>
+            <tr>
+                <td>sport</td>
+                <td>0.5</td>
+            </tr>
+            <tr>
+                <td>education</td>
+                <td>1.0</td>
+            </tr>
+            <tr>
+                <td>office</td>
+                <td>0.6</td>
+            </tr>
+        </table>
+
+        <h2>建筑结构人工赋值表</h2>
+        <table>
+            <tr>
+                <th>特征取值</th>
+                <th>得分</th>
+                <th>说明</th>
+            </tr>
+            <tr>
+                <td>钢混结构</td>
+                <td>0.95</td>
+                <td>稳定性最佳、抗震性更好</td>
+            </tr>
+            <tr>
+                <td>混合结构</td>
+                <td>0.75</td>
+                <td>稳定性较好</td>
+            </tr>
+            <tr>
+                <td>砖混结构</td>
+                <td>0.45</td>
+                <td>稳定性一般</td>
+            </tr>
+            <tr>
+                <td>砖木结构</td>
+                <td>0.25</td>
+                <td>稳定性较差</td>
+            </tr>
+            <tr>
+                <td>其他/未知</td>
+                <td>0.50</td>
+                <td>/</td>
+            </tr>
+        </table>
+
+        <h2>电梯楼层组合人工赋值表</h2>
+        <table>
+            <tr>
+                <th>特征取值</th>
+                <th>得分</th>
+                <th>说明</th>
+            </tr>
+            <tr>
+                <td>有电梯 + 中/高楼层/顶层</td>
+                <td>1.00</td>
+                <td>电梯便利性与视野采光最佳组合</td>
+            </tr>
+            <tr>
+                <td>有电梯 + 低楼层/底层</td>
+                <td>0.70</td>
+                <td>有电梯但楼层较低便利性稍差</td>
+            </tr>
+            <tr>
+                <td>无电梯 + 底层/低楼层</td>
+                <td>0.80</td>
+                <td>无电梯但楼层低步行便利</td>
+            </tr>
+            <tr>
+                <td>无电梯中楼层</td>
+                <td>0.50</td>
+                <td>无电梯中等楼层步行一般</td>
+            </tr>
+            <tr>
+                <td>无电梯高楼层/顶层</td>
+                <td>0.30</td>
+                <td>无电梯高楼层步行不便</td>
+            </tr>
+            <tr>
+                <td>其他情况</td>
+                <td>0.50</td>
+                <td>/</td>
+            </tr>
+        </table>
+
+        <h2>房屋朝向人工赋值表</h2>
+        <table>
+            <tr>
+                <th>特征取值</th>
+                <th>得分</th>
+                <th>说明</th>
+            </tr>
+            <tr>
+                <td>南北通透</td>
+                <td>0.95</td>
+                <td>通风采光最佳,市场最受欢迎</td>
+            </tr>
+            <tr>
+                <td>纯南向</td>
+                <td>0.75</td>
+                <td>采光好但通风稍差</td>
+            </tr>
+            <tr>
+                <td>其他朝向</td>
+                <td>0.40</td>
+                <td>采光通风相对较差</td>
+            </tr>
+            <tr>
+                <td>其他情况</td>
+                <td>0.25</td>
+                <td>/</td>
+            </tr>
+        </table>
+
+        <h2>模型评估结果对比</h2>
+        <table>
+            <tr>
+                <th>模型名称</th>
+                <th>R²</th>
+                <th>RMSE</th>
+                <th>MAE</th>
+                <th>MAPE</th>
+                <th>交叉验证R²均值</th>
+                <th>交叉验证R²标准差</th>
+            </tr>
+            <tr>
+                <td>岭回归</td>
+                <td>0.0287</td>
+                <td>9860.26</td>
+                <td>7951.21</td>
+                <td>37.2</td>
+                <td>0.0283</td>
+                <td>0.0084</td>
+            </tr>
+            <tr>
+                <td>Lasso回归</td>
+                <td>0.0283</td>
+                <td>9862.74</td>
+                <td>7956.58</td>
+                <td>37.1</td>
+                <td>0.0280</td>
+                <td>0.0085</td>
+            </tr>
+            <tr>
+                <td>弹性网络</td>
+                <td>0.0288</td>
+                <td>9860.02</td>
+                <td>7950.35</td>
+                <td>37.2</td>
+                <td>0.0285</td>
+                <td>0.0084</td>
+            </tr>
+            <tr>
+                <td>随机森林</td>
+                <td>0.7292</td>
+                <td>5206.74</td>
+                <td>3412.02</td>
+                <td>15.0</td>
+                <td>0.7285</td>
+                <td>0.0123</td>
+            </tr>
+            <tr>
+                <td>梯度提升树</td>
+                <td>0.7195</td>
+                <td>5298.55</td>
+                <td>3535.69</td>
+                <td>15.6</td>
+                <td>0.7190</td>
+                <td>0.0118</td>
+            </tr>
+            <tr>
+                <td>XGBoost</td>
+                <td>0.7245</td>
+                <td>5251.65</td>
+                <td>3500.13</td>
+                <td>15.5</td>
+                <td>0.7240</td>
+                <td>0.0121</td>
+            </tr>
+            <tr>
+                <td>LightGBM</td>
+                <td>0.6955</td>
+                <td>5521.20</td>
+                <td>3688.06</td>
+                <td>16.3</td>
+                <td>0.6950</td>
+                <td>0.0135</td>
+            </tr>
+            <tr>
+                <td>SVR</td>
+                <td>0.0919</td>
+                <td>9534.51</td>
+                <td>7450.14</td>
+                <td>32.6</td>
+                <td>0.0915</td>
+                <td>0.0102</td>
+            </tr>
+            <tr>
+                <td>MLP</td>
+                <td>0.1549</td>
+                <td>9197.77</td>
+                <td>7300.37</td>
+                <td>33.1</td>
+                <td>0.1540</td>
+                <td>0.0156</td>
+            </tr>
+        </table>
+
+        <h2>模型评估图像</h2>
+        <img src="./image/model_performance_comparison.jpeg" alt="模型评估结果对比图">
+        <img src="./image/predicted_vs_actual_values.jpeg" alt="预测值与实际值散点图">
+        <img src="./image/residual_analysis.jpeg" alt="残差分析图">
+
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>基于空间聚类的北京房价市场划分</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #609ad3;
+            /* 蓝色标题 */
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #719dca;
+            /* 蓝色二级标题 */
+            margin-top: 30px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .img-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            border: 2px solid #93b4d5;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #9ac8f5;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #8bb9e7;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>基于空间聚类的北京房价市场划分</h1>
+
+        <h2>空间聚类肘部图</h2>
+        <div class="img-container">
+            <img src="image/ElbowImage.png" alt="肘部法则图">
+        </div>
+
+        <h2>北京房价市场空间聚类结果</h2>
+        <div class="img-container">
+            <img src="image/SKATER_BEIJING.png" alt="北京房价市场空间聚类结果">
+        </div>
+
+        <h2>各聚类区域特征分析</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>标识符</th>
+                    <th>主要影响因素</th>
+                    <th>平均房产价格</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>0</td>
+                    <td>医疗设施稀缺, 旅游景点丰富, 商业设施丰富</td>
+                    <td>29,101</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>医疗设施丰富, 旅游景点丰富, 教育资源丰富</td>
+                    <td>35,737</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>商业设施丰富, 建筑结构好, 旅游资源稀缺</td>
+                    <td>27,356</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>商业设施稀缺, 医疗设施稀缺, 距离市中心远</td>
+                    <td>14,453</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>距离市中心远, 节点接近中心性低, 医疗设施稀缺</td>
+                    <td>18,455</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>距离市中心远, 商业设施稀缺, 医疗设施稀缺</td>
+                    <td>15,316</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>北京市房价市场划分</h2>
+        <div class="img-container">
+            <img src="image/SKATER_BEIJING_filtered_convex_hull.png" alt="北京市房价市场划分">
+        </div>
+
+    </div>
+</body>
+
+</html>
